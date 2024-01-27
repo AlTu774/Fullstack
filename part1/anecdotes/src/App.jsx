@@ -6,6 +6,25 @@ const AddVote = (setVotes, votes, anecdote) => {
   setVotes(copy)
 }
 
+const FindMax = (props) => {
+  let max = 0
+  let max_index = 0
+
+  props.votes.forEach((vote, index) => {
+    if (vote > max) {
+      max = vote
+      max_index = index
+    }
+  })
+
+  return (
+    <div>
+      <p>{props.anecdotes[max_index]}</p>
+      <p>has {max} votes</p>
+    </div>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -18,7 +37,8 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
   const [selected, setSelected] = useState(0)
-  const [votes, setVotes] = useState([0,0,0,0,0,0,0,0]);
+  const [votes, setVotes] = useState([0,0,0,0,0,0,0,0])
+  const [max, setMax] = useState(0)
 
   const RandomAnecdote = () => {
     const random = Math.floor(Math.random()*8)
@@ -27,14 +47,17 @@ const App = () => {
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
-      <p>votes {votes[selected]}</p>
-      <button onClick={RandomAnecdote}>
-        next anecdote
-      </button>
+      <p>has {votes[selected]} votes</p>
       <button onClick={()=>AddVote(setVotes, votes, selected)}>
         vote
       </button>
+      <button onClick={RandomAnecdote}>
+        next anecdote
+      </button>
+      <h1>Anecdote with the most votes</h1>
+      <FindMax votes={votes} setMax={setMax} max={max} anecdotes={anecdotes} />
     </div>
   )
 }
