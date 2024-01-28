@@ -12,6 +12,7 @@ const Content = (props) => {
       <Part name={props.course.parts[0].name} exercises={props.course.parts[0].exercises}/>
       <Part name={props.course.parts[1].name} exercises={props.course.parts[1].exercises}/>
       <Part name={props.course.parts[2].name} exercises={props.course.parts[2].exercises}/>
+      <Part name={props.course.parts[3].name} exercises={props.course.parts[3].exercises}/>
     </div>
   )
 }
@@ -32,13 +33,18 @@ const Total = (props) => {
 
 const Course = (props) => {
   const course = props.course
-  console.log(course.parts)
   const course_list = course.parts
-  let sum_exercises = 0
-  course_list.forEach(c => {
-    console.log(c)
-    sum_exercises += c.exercises
-  })
+  const initialsum = 0
+  const sum_exercises = course_list.reduce(
+    (accumulator, value) => accumulator + value.exercises,
+    initialsum
+  )
+
+  //let sum_exercises = 0
+  //course_list.forEach(c => {
+    //console.log(c)
+    //sum_exercises += c.exercises
+  //})
   return (
     <div>
       <Header course={course} />
