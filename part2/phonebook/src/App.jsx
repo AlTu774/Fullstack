@@ -8,9 +8,19 @@ const App = () => {
 
   const AddPerson = (event) => {
     event.preventDefault()
+    let new_p = true
     const person = { name: newName }
+    persons.forEach(existing_person => {
+      if (JSON.stringify(person.name) === JSON.stringify(existing_person.name)) {
+        alert(`${newName} is already added to phonebook`)
+        new_p = false
+        return
+      }
+    })
+    if (new_p) {
     setPersons(persons.concat(person))
     console.log(persons)
+    }
   }
 
   const handleAddingPerson = (event) => {
