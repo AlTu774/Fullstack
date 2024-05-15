@@ -1,3 +1,4 @@
+import axios from "axios"
 
 export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAddingNumber, persons, setPersons}) => {
     const AddPerson = (event) => {
@@ -12,7 +13,8 @@ export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAdd
             }
         })
         if (new_p) {
-        setPersons(persons.concat(person))
+          axios.post('http://localhost:3001/persons', person)
+          setPersons(persons.concat(person))
         }
     }
 
