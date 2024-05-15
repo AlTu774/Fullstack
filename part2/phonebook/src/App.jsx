@@ -1,12 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import { NewPersonForm } from './components/NewPersonForm'
 import { ContactFilter } from './components/Filtering'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: "040-1234567"}
-  ]) 
+  const [persons, setPersons] = useState([]) 
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -26,6 +24,12 @@ const App = () => {
     setlowcaseFilter(filterString.toLowerCase())
     setFilter(filterString)
   }
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/persons').then(response => {
+      setPersons(response.data)
+    })
+  },[])
 
 
   return (
