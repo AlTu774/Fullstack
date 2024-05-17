@@ -1,10 +1,12 @@
+import DeleteButton from "./DeleteButton"
 
-export const Contacts = (persons) => {
+export const Contacts = (contactsToShow, persons, setPersons) => {
     return (
         <div>
-        {persons.map(person =>
+        {contactsToShow.map(person =>
             <p key={person.name}>
-              {person.name} {person.number}
+            {person.name} {person.number}
+            <DeleteButton persons={persons} setPersons={setPersons} id={person.id}/>
             </p>
             )}
         </div>

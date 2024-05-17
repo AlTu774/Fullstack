@@ -1,4 +1,3 @@
-import axios from "axios"
 import personsService from "../services/persons"
 
 export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAddingNumber, persons, setPersons}) => {
@@ -14,8 +13,7 @@ export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAdd
             }
         })
         if (new_p) {
-          personsService.add(person)
-          setPersons(persons.concat(person))
+          personsService.addContact(person).then(newPerson => setPersons(persons.concat(newPerson)))
         }
     }
 
