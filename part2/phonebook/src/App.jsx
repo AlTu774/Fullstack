@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { NewPersonForm } from './components/NewPersonForm'
 import { ContactFilter } from './components/Filtering'
+import  personsService  from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -26,8 +27,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then(response => {
-      setPersons(response.data)
+    personsService.getAll().then(contacts => {
+      setPersons(contacts)
     })
   },[])
 
