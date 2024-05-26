@@ -1,12 +1,13 @@
 import personsService from "../services/persons"
 
-export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAddingNumber, persons, setPersons}) => {
+export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAddingNumber, persons, setPersons, handleMessage}) => {
     
   const AddPerson = (event) => {
         event.preventDefault()
         let new_p = true
         const person = { name: newName, number: newNumber }
         let copyPersons = [...persons]
+        let action = "Added"
         copyPersons.forEach(existing_person => {
             if (JSON.stringify(person.name) === JSON.stringify(existing_person.name)) {
               if (window.confirm(person.name + " is already added to phonebook, replace the old number with a new one?")) {
@@ -16,7 +17,10 @@ export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAdd
                   "id": existing_person.id
                 }
                 personsService.updateContact(existing_person.id, newContact).then(existing_person.number = newNumber )
+                action = "Updated"
               }
+              const message = action + " " + person.name 
+              handleMessage(message)
               setPersons(copyPersons)
               new_p = false
               return
@@ -24,6 +28,8 @@ export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAdd
         })
         if (new_p) {
           personsService.addContact(person).then(newPerson => setPersons(persons.concat(newPerson)))
+          const message = action + " " + person.name 
+          handleMessage(message)
         }
     }
 
