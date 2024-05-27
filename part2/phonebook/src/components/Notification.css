@@ -1,7 +1,16 @@
 
-.notification {
+.notificationgreen {
     background: gray;
     color: green;
+    border-style: solid;
+    border-radius: 10px;
+    font-size: 30px;
+    padding: 10px;
+}
+
+.notificationred {
+    background: gray;
+    color: rgb(159, 64, 64);
     border-style: solid;
     border-radius: 10px;
     font-size: 30px;
