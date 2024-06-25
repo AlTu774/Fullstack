@@ -5,9 +5,7 @@ export const Notification = ({message, color}) => {
         return null
     }
 
-    console.log(message, color)
     const name = "notification"+color
-    console.log(name)
 
     return (
         <div>
