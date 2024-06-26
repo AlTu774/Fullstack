@@ -49,6 +49,10 @@ const App = () => {
     )
   }
 
+  const handleButton = (country) => {
+    setCountries([country])
+  }
+
   const CountryList = () => {
     if (list.length == 0) {
       return(
@@ -67,7 +71,9 @@ const App = () => {
     return(
       <div>
       {countries.map(country =>
-      <p key={country.name.common}> {country.name.common} </p>)}
+      <p key={country.name.common}> {country.name.common}
+      <button onClick={() => handleButton(country)}>show</button>
+      </p>)}
       </div>
     )
   }
