@@ -19,12 +19,12 @@ export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAdd
                 }
                 personsService.updateContact(existing_person.id, newContact).then((result) => {
                   existing_person.number = newNumber
-                  if (result === "error") {
-                    handleMessage("Information of " + person.name + " has already been removed from server", "red")
-                  }
-                  else {
-                    handleMessage("Updated " + person.name, "green")
-                  }
+                  handleMessage("Updated " + person.name, "green")
+                })
+                .catch(error => {
+                  handleMessage(error.response.data.error, "red")
+                  new_p = false
+                  return
                 })
               }
               setPersons(copyPersons)
@@ -33,9 +33,18 @@ export const NewPersonForm = ({newName, handleAddingPerson, newNumber, handleAdd
             }
         })
         if (new_p) {
-          personsService.addContact(person).then(newPerson => setPersons(persons.concat(newPerson)))
-          const message = action + " " + person.name 
-          handleMessage(message, color)
+          let message = action + " " + person.name
+          personsService.addContact(person).then(newPerson => {
+            setPersons(persons.concat(newPerson))
+
+            handleMessage(message, color)
+          })
+          .catch(error => {
+            message = error.response.data.error
+            color = "red"
+
+            handleMessage(message, color)
+          })
         }
     }
 

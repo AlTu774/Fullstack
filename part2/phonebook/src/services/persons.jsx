@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = 'http://localhost:3001/api/persons'
+const baseUrl = '/api/persons'
 
 //json server url http://localhost:3001/persons
 
@@ -20,7 +20,8 @@ const deleteContact = (id) => {
 
 const updateContact = (id, newContact) => {
     const request = axios.put(baseUrl + '/' + id, newContact)
-    return request.then(response => response.data).catch(error => "error")
+    return request.then(response => response.data)
+    //.catch(error => "error")
 }
 
 export default {
