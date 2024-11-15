@@ -132,5 +132,29 @@ describe('favoriteBlog', () => {
     test('when list is empty, it returns an empty object', () => {
         result = listHelper.favoriteBlog([])
         assert.deepEqual(result, {})
-    })
+    }) 
+})
+
+describe('mostBlogs', () => {
+  test('it returns the correct author',() => {
+    const result = listHelper.mostBlogs(blogs)
+    assert.deepEqual(result.author,"Robert C. Martin")
+  })
+
+  test('it returns the correct amount of blogs',() => {
+    const result = listHelper.mostBlogs(blogs)
+    assert.deepEqual(result.blogs, 3)
+  })
+
+  test('when there are 2 authors with the same amount of blogs, it returns either one',() => {
+    const twoMost = blogs.slice(1,5)
+    const result = listHelper.mostBlogs(twoMost)
+    assert(["Edsger W. Dijkstra","Robert C. Martin"].includes(result.author))
+    assert.equal(result.blogs,2)
+  })
+  
+  test('when list is empty, it returns default object', () => {
+    const result = listHelper.mostBlogs([])
+    assert.deepEqual(result, {author:null, blogs:0})
+  })
 })
