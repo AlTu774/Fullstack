@@ -157,4 +157,37 @@ describe('mostBlogs', () => {
     const result = listHelper.mostBlogs([])
     assert.deepEqual(result, {author:null, blogs:0})
   })
+
+  test('when there is only one blog it returns correct object', () => {
+    const blog = [blogs[0]]
+    const result = listHelper.mostBlogs(blog)
+    assert.deepEqual(result, {author:"Edsger W. Dijkstra", blogs:1})
+  })
+})
+
+describe('mostLikes', () => {
+  test('when there are multiple blogs it returns the correct author and likes', () => {
+    const result = listHelper.mostLikes(blogs)
+    assert.deepEqual(result, {author:"Edsger W. Dijkstra", likes:17})
+  })
+
+  test('when there is only one blog it returns it with correct info', () => {
+    const blog = [blogs[0]]
+    const result = listHelper.mostLikes(blog)
+    assert.deepEqual(result, {author:"Edsger W. Dijkstra", likes:5})
+  })
+
+  test('if there are 2 blogs with same amount of likes, it returns either one', () => {
+    const blogsCopy = [...blogs]
+    blogsCopy[4].likes=5
+    const result = listHelper.mostLikes(blogsCopy)
+    assert(["Edsger W. Dijkstra","Robert C. Martin"].includes(result.author))
+  })
+
+  test('when list is empty, it return default object', () => {
+    const result = listHelper.mostLikes([])
+    assert.deepEqual(result, {author:null, likes:0})
+  })
+
+
 })
