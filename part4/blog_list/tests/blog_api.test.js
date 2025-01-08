@@ -77,6 +77,23 @@ test("the right blog gets added to the database", async () => {
     assert.equal(newestBlog.likes, blog.likes)
 })
 
+test("if added blog doesn't have likes -property then likes is 0", async () => {
+    const blog = {
+        title: "New Blog",
+        author: "User3",
+        url: "blogs.com/article4"
+    }
+
+    await api
+    .post("/api/blogs")
+    .send(blog)
+    
+    const response = await api.get("/api/blogs")
+    const newestBlog = response.body[response.body.length-1]
+
+    assert.deepEqual(newestBlog.likes, 0)
+})
+
 
 after(async () => {
     await mongoose.connection.close()
