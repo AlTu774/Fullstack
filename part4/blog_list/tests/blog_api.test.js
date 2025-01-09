@@ -94,6 +94,33 @@ test("if added blog doesn't have likes -property then likes is 0", async () => {
     assert.deepEqual(newestBlog.likes, 0)
 })
 
+test("a blog without title properties will receive status code 400", async () => {
+    const blogNoTitle = {
+        author: "User3",
+        url: "blogs.com/article2",
+        likes: 2
+    }
+
+    await api
+    .post("/api/blogs")
+    .send(blogNoTitle)
+    .expect(400)
+})
+
+test("a blog without url properties will receive status code 400", async () => {
+    const blogNoURL = {
+        title: "New Blog",
+        author: "User3",
+        likes: 3
+    }
+
+    await api
+    .post("/api/blogs")
+    .send(blogNoURL)
+    .expect(400)
+})
+
+
 
 after(async () => {
     await mongoose.connection.close()
