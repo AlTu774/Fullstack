@@ -5,122 +5,173 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./blog_test_helper')
+const blog = require('../models/blog')
+const { stringify } = require('node:querystring')
 
 const api = supertest(app)
 
+describe("testing with database that has blogs in it", () => { 
+    beforeEach(async () => {
+        await Blog.deleteMany({})
 
-beforeEach(async () => {
-    await Blog.deleteMany({})
+        let newBlog = new Blog(helper.initialBlogs[0])
+        await newBlog.save()
 
-    let newBlog = new Blog(helper.initialBlogs[0])
-    await newBlog.save()
+        newBlog = new Blog(helper.initialBlogs[1])
+        await newBlog.save()
 
-    newBlog = new Blog(helper.initialBlogs[1])
-    await newBlog.save()
+        newBlog = new Blog(helper.initialBlogs[2])
+        await newBlog.save()
+    })
 
-    newBlog = new Blog(helper.initialBlogs[2])
-    await newBlog.save()
-})
+    describe("viewing blogs", () => {
+        test("there are 3 notes initially", async () => {
+            const response =  await api.get("/api/blogs")
+            .expect('Content-Type', /application\/json/)
 
+            assert.strictEqual(response.body.length, helper.initialBlogs.length)  
+        })
 
-test("there are 3 notes initially", async () => {
-    const response =  await api.get("/api/blogs")
-    .expect('Content-Type', /application\/json/)
+        test("notes contain unique identifier id", async () => {
+            const response = await api.get("/api/blogs")
+            const blogs = response.body
 
-    assert.strictEqual(response.body.length, helper.initialBlogs.length)  
-})
+            blogs.forEach(blog => {
+                assert.notDeepEqual(blog.id, undefined)
+            })
+        })
+    })
 
-test("notes contain unique identifier id", async () => {
-    const response = await api.get("/api/blogs")
-    const blogs = response.body
+    
+    describe("adding blogs", () => {
+        test("adding a blog to the database works", async () => {
+            const blog = {
+                title: "New Blog",
+                author: "User3",
+                url: "blogs.com/article2",
+                likes: 2
+            }
+            
+            await api
+            .post("/api/blogs")
+            .send(blog)
 
-    blogs.forEach(blog => {
-        assert.notDeepEqual(blog.id, undefined)
+            const response = await api.get("/api/blogs")
+            
+            assert.strictEqual(response.body.length, helper.initialBlogs.length+1)  
+        })
+
+        test("the right blog gets added to the database", async () => {
+            const blog = {
+                title: "New Blog",
+                author: "User3",
+                url: "blogs.com/article2",
+                likes: 2
+            }
+            
+            await api
+            .post("/api/blogs")
+            .send(blog)
+
+            const response = await api.get("/api/blogs")
+            const newestBlog = response.body[response.body.length-1]
+
+            assert.equal(newestBlog.title, blog.title)
+            assert.equal(newestBlog.author, blog.author)
+            assert.equal(newestBlog.url, blog.url)
+            assert.equal(newestBlog.likes, blog.likes)
+        })
+
+        test("if added blog doesn't have likes -property then likes is 0", async () => {
+            const blog = {
+                title: "New Blog",
+                author: "User3",
+                url: "blogs.com/article4"
+            }
+
+            await api
+            .post("/api/blogs")
+            .send(blog)
+            
+            const response = await api.get("/api/blogs")
+            const newestBlog = response.body[response.body.length-1]
+
+            assert.deepEqual(newestBlog.likes, 0)
+        })
+
+        test("a blog without title properties will receive status code 400", async () => {
+            const blogNoTitle = {
+                author: "User3",
+                url: "blogs.com/article2",
+                likes: 2
+            }
+
+            await api
+            .post("/api/blogs")
+            .send(blogNoTitle)
+            .expect(400)
+        })
+
+        test("a blog without url properties will receive status code 400", async () => {
+            const blogNoURL = {
+                title: "New Blog",
+                author: "User3",
+                likes: 3
+            }
+
+            await api
+            .post("/api/blogs")
+            .send(blogNoURL)
+            .expect(400)
+        })
+    })
+
+    describe("deleting blogs", () => {
+        test("deleting an existing blog returns 204", async () => {
+            const response = await api.get("/api/blogs")
+            const blogs = response.body
+            const newestBlog = blogs[blogs.length - 1]
+
+            await api
+            .delete(`/api/blogs/${newestBlog.id}`)
+            .expect(204)
+        })
+
+        test("deleting a blog from database works", async () => {
+            let response = await api.get("/api/blogs")
+            let blogs = response.body
+            const newestBlog = blogs[blogs.length - 1]
+
+            await api
+            .delete(`/api/blogs/${newestBlog.id}`)
+            
+            response = await api.get("/api/blogs/")
+            blogs = response.body
+            assert.equal(blogs.length, helper.initialBlogs.length-1)
+        })
+
+        test("deleting same blog twice doesn't affect database", async () => {
+            let response = await api.get("/api/blogs")
+            const blogs = response.body
+            const newestBlog = blogs[blogs.length - 1]
+
+            await api
+            .delete(`/api/blogs/${newestBlog.id}`)
+
+            response = await api.get("/api/blogs/")
+            const blogs1 = response.body
+
+            await api
+            .delete(`/api/blogs/${newestBlog.id}`)
+            .expect(204)
+
+            response = await api.get("/api/blogs/")
+            const blogs2 = response.body
+            
+            assert.deepEqual(blogs1,blogs2)
+        })
     })
 })
-
-test("adding a blog to the database works", async () => {
-    const blog = {
-        title: "New Blog",
-        author: "User3",
-        url: "blogs.com/article2",
-        likes: 2
-    }
-    
-    await api
-    .post("/api/blogs")
-    .send(blog)
-
-    const response = await api.get("/api/blogs")
-    
-    assert.strictEqual(response.body.length, helper.initialBlogs.length+1)  
-})
-
-test("the right blog gets added to the database", async () => {
-    const blog = {
-        title: "New Blog",
-        author: "User3",
-        url: "blogs.com/article2",
-        likes: 2
-    }
-    
-    await api
-    .post("/api/blogs")
-    .send(blog)
-
-    const response = await api.get("/api/blogs")
-    const newestBlog = response.body[response.body.length-1]
-
-    assert.equal(newestBlog.title, blog.title)
-    assert.equal(newestBlog.author, blog.author)
-    assert.equal(newestBlog.url, blog.url)
-    assert.equal(newestBlog.likes, blog.likes)
-})
-
-test("if added blog doesn't have likes -property then likes is 0", async () => {
-    const blog = {
-        title: "New Blog",
-        author: "User3",
-        url: "blogs.com/article4"
-    }
-
-    await api
-    .post("/api/blogs")
-    .send(blog)
-    
-    const response = await api.get("/api/blogs")
-    const newestBlog = response.body[response.body.length-1]
-
-    assert.deepEqual(newestBlog.likes, 0)
-})
-
-test("a blog without title properties will receive status code 400", async () => {
-    const blogNoTitle = {
-        author: "User3",
-        url: "blogs.com/article2",
-        likes: 2
-    }
-
-    await api
-    .post("/api/blogs")
-    .send(blogNoTitle)
-    .expect(400)
-})
-
-test("a blog without url properties will receive status code 400", async () => {
-    const blogNoURL = {
-        title: "New Blog",
-        author: "User3",
-        likes: 3
-    }
-
-    await api
-    .post("/api/blogs")
-    .send(blogNoURL)
-    .expect(400)
-})
-
-
 
 after(async () => {
     await mongoose.connection.close()
