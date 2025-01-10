@@ -6,7 +6,6 @@ const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./blog_test_helper')
 const blog = require('../models/blog')
-const { stringify } = require('node:querystring')
 
 const api = supertest(app)
 
@@ -137,7 +136,7 @@ describe("testing with database that has blogs in it", () => {
             .expect(204)
         })
 
-        test("deleting a blog from database works", async () => {
+        test("deleting a blog from the database works", async () => {
             let response = await api.get("/api/blogs")
             let blogs = response.body
             const newestBlog = blogs[blogs.length - 1]
@@ -170,6 +169,40 @@ describe("testing with database that has blogs in it", () => {
             
             assert.deepEqual(blogs1,blogs2)
         })
+
+
+    describe("updating blogs", () => {
+        test("updating a blog in database returns it", async () => {
+            const response = await api.get("/api/blogs/")
+            const blogs = response.body
+
+            const changeBlog = blogs[1]
+            const newTitle = { title: "Changed Title" }
+            changeBlog.title = newTitle.title
+
+            await api
+            .put(`/api/blogs/${changeBlog.id}`)
+            .send(newTitle)
+            .expect(changeBlog)
+        })
+
+        test("database reflects change after update", async () => {
+            let response = await api.get("/api/blogs/")
+            const blogs = response.body
+
+            const newUrl = { url: "blogs.com/article10" }
+            blogs[0].url = newUrl.url
+            //changeBlog.url = newUrl.url
+
+            await api
+            .put(`/api/blogs/${blogs[0].id}`)
+            .send(newUrl)
+
+            response = await api.get("/api/blogs/")
+            const updatedBlogs = response.body
+            assert.deepEqual(updatedBlogs, blogs)
+        })
+    })
     })
 })
 
