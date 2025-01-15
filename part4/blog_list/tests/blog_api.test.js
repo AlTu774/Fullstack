@@ -192,7 +192,6 @@ describe("testing with database that has blogs in it", () => {
 
             const newUrl = { url: "blogs.com/article10" }
             blogs[0].url = newUrl.url
-            //changeBlog.url = newUrl.url
 
             await api
             .put(`/api/blogs/${blogs[0].id}`)
