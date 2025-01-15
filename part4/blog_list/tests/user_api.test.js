@@ -69,9 +69,62 @@ describe("one user in database initially", () => {
             assert.equal(users.length, 2)
 
             const newestUser = users[users.length-1]
-            
+
             assert.deepEqual({ name: newUser.name, username: newUser.username},
                 {name: newestUser.name, username: newestUser.username})
+        })
+
+        test("if new created user doesn't have an unique username, error is returned", async () => {
+            const newUser = {
+                name: "newbie1",
+                username: "first123",
+                password: "newpass1223"
+            }
+
+            await api.post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+            const response = await api.get('/api/users')
+            const users = response.body
+
+            assert.equal(users.length, 1)
+        })
+
+        test("new user's password or username being shorter than 3 letters causes error", async () => {
+            const newUser1 = {
+                name: "newbie1",
+                username: "us",
+                password: "newpass1223"
+            }
+
+            await api.post('/api/users')
+            .send(newUser1)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+            
+            let response = await api.get('/api/users')
+            let users = response.body
+
+            assert.equal(users.length, 1)
+
+            const newUser2 = {
+                name: "newbie2",
+                username: "first123",
+                password: "11"
+            }
+
+            await api.post('/api/users')
+            .send(newUser2)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+            response = await api.get('/api/users')
+            users = response.body
+
+            assert.equal(users.length, 1)
         })
     })
 })
