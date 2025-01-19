@@ -4,14 +4,18 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./blog_test_helper')
-const blog = require('../models/blog')
-
+const helperUser = require('./user_test_helper')
 const api = supertest(app)
 
 describe("testing with database that has blogs in it", () => { 
     beforeEach(async () => {
         await Blog.deleteMany({})
+        await User.deleteMany({})
+
+        let user = new User(helperUser.initialUsers[0])
+        await user.save()
 
         let newBlog = new Blog(helper.initialBlogs[0])
         await newBlog.save()
@@ -61,6 +65,7 @@ describe("testing with database that has blogs in it", () => {
         })
 
         test("the right blog gets added to the database", async () => {
+            
             const blog = {
                 title: "New Blog",
                 author: "User3",
@@ -169,6 +174,7 @@ describe("testing with database that has blogs in it", () => {
             
             assert.deepEqual(blogs1,blogs2)
         })
+    })
 
 
     describe("updating blogs", () => {
@@ -201,7 +207,6 @@ describe("testing with database that has blogs in it", () => {
             const updatedBlogs = response.body
             assert.deepEqual(updatedBlogs, blogs)
         })
-    })
     })
 })
 

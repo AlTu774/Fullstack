@@ -3,22 +3,37 @@ const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const bcyrpt = require('bcrypt')
+const helper = require('./user_test_helper')
 const User = require('../models/user')
+const Blog = require('../models/blog')
+const helperBlog = require('./blog_test_helper')
 
 const api = supertest(app)
 
 describe("one user in database initially", () => {
     beforeEach(async () => {
         await User.deleteMany({})
+        await Blog.deleteMany({})
 
-        const passwordHash = await bcyrpt.hash("pass123",10)
-        const firstUser = new User({
-            name: "User11",
-            username: "first123",
-            passwordHash: passwordHash
-        })
+        let newBlog = new Blog(helperBlog.initialBlogs[0])
+        await newBlog.save()
 
+        newBlog = new Blog(helperBlog.initialBlogs[1])
+        await newBlog.save()
+
+        newBlog = new Blog(helperBlog.initialBlogs[2])
+        await newBlog.save()
+
+        
+        const user = {...helper.initialUsers[0]}
+        const passwordHash = await helper.generateHash(user.password)
+        user.password = passwordHash
+
+        const blogs = await Blog.find({})
+        const blogIds = blogs.map(blog => blog.id)
+        user.blogs = blogIds
+
+        let firstUser = new User(user)
         await firstUser.save()
     })
 
