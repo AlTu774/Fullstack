@@ -9,33 +9,44 @@ const helper = require('./blog_test_helper')
 const helperUser = require('./user_test_helper')
 const api = supertest(app)
 
-describe("testing with database that has blogs in it", () => { 
+describe("testing with database that has blogs in it", async () => { 
+    let loginToken = null
+
+    const user = helperUser.initialUsers[0]
+    let result = await api.post("/api/users").send(user)
+    const id = result.body.id
+
+    result = await api.post("/api/login")
+    .send(user)
+    loginToken = result.body.token
+
     beforeEach(async () => {
         await Blog.deleteMany({})
-        await User.deleteMany({})
 
-        let user = new User(helperUser.initialUsers[0])
-        await user.save()
+        const blogs = [...helper.initialBlogs]
 
-        let newBlog = new Blog(helper.initialBlogs[0])
+        blogs[0].user = id
+        let newBlog = new Blog(blogs[0])
         await newBlog.save()
 
-        newBlog = new Blog(helper.initialBlogs[1])
+        blogs[1].user = id
+        newBlog = new Blog(blogs[1])
         await newBlog.save()
 
-        newBlog = new Blog(helper.initialBlogs[2])
+        blogs[2].user = id
+        newBlog = new Blog(blogs[2])
         await newBlog.save()
     })
 
     describe("viewing blogs", () => {
-        test("there are 3 notes initially", async () => {
+        test("there are 3 blogs initially", async () => {
             const response =  await api.get("/api/blogs")
             .expect('Content-Type', /application\/json/)
 
             assert.strictEqual(response.body.length, helper.initialBlogs.length)  
         })
 
-        test("notes contain unique identifier id", async () => {
+        test("blogs contain unique identifier id", async () => {
             const response = await api.get("/api/blogs")
             const blogs = response.body
 
@@ -54,9 +65,10 @@ describe("testing with database that has blogs in it", () => {
                 url: "blogs.com/article2",
                 likes: 2
             }
-            
+
             await api
             .post("/api/blogs")
+            .set("Authorization", `Bearer ${loginToken}`) 
             .send(blog)
 
             const response = await api.get("/api/blogs")
@@ -75,6 +87,7 @@ describe("testing with database that has blogs in it", () => {
             
             await api
             .post("/api/blogs")
+            .set("Authorization", `Bearer ${loginToken}`) 
             .send(blog)
 
             const response = await api.get("/api/blogs")
@@ -95,6 +108,7 @@ describe("testing with database that has blogs in it", () => {
 
             await api
             .post("/api/blogs")
+            .set("Authorization", `Bearer ${loginToken}`) 
             .send(blog)
             
             const response = await api.get("/api/blogs")
@@ -112,6 +126,7 @@ describe("testing with database that has blogs in it", () => {
 
             await api
             .post("/api/blogs")
+            .set("Authorization", `Bearer ${loginToken}`) 
             .send(blogNoTitle)
             .expect(400)
         })
@@ -125,6 +140,7 @@ describe("testing with database that has blogs in it", () => {
 
             await api
             .post("/api/blogs")
+            .set("Authorization", `Bearer ${loginToken}`) 
             .send(blogNoURL)
             .expect(400)
         })
@@ -138,6 +154,7 @@ describe("testing with database that has blogs in it", () => {
 
             await api
             .delete(`/api/blogs/${newestBlog.id}`)
+            .set("Authorization", `Bearer ${loginToken}`) 
             .expect(204)
         })
 
@@ -148,6 +165,7 @@ describe("testing with database that has blogs in it", () => {
 
             await api
             .delete(`/api/blogs/${newestBlog.id}`)
+            .set("Authorization", `Bearer ${loginToken}`) 
             
             response = await api.get("/api/blogs/")
             blogs = response.body
@@ -161,12 +179,14 @@ describe("testing with database that has blogs in it", () => {
 
             await api
             .delete(`/api/blogs/${newestBlog.id}`)
+            .set("Authorization", `Bearer ${loginToken}`) 
 
             response = await api.get("/api/blogs/")
             const blogs1 = response.body
 
             await api
             .delete(`/api/blogs/${newestBlog.id}`)
+            .set("Authorization", `Bearer ${loginToken}`) 
             .expect(204)
 
             response = await api.get("/api/blogs/")
@@ -211,5 +231,7 @@ describe("testing with database that has blogs in it", () => {
 })
 
 after(async () => {
+    await User.deleteMany({})
+    await Blog.deleteMany({})
     await mongoose.connection.close()
   })

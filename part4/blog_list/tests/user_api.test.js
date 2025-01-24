@@ -10,7 +10,8 @@ const helperBlog = require('./blog_test_helper')
 
 const api = supertest(app)
 
-describe("one user in database initially", () => {
+describe.only("one user in database initially", () => {
+    let loginToken = null
     beforeEach(async () => {
         await User.deleteMany({})
         await Blog.deleteMany({})
@@ -145,5 +146,7 @@ describe("one user in database initially", () => {
 })
 
 after(async () => {
+    await User.deleteMany({})
+    await Blog.deleteMany({})
     await mongoose.connection.close()
   })
