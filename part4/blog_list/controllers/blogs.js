@@ -1,7 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
 
 blogsRouter.get('/',  async (request, response) => {
@@ -11,15 +10,9 @@ blogsRouter.get('/',  async (request, response) => {
   })
   
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor,async (request, response) => {
   const content = request.body
-
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
-  content.user = user.id
+  const user = request.user
 
   if (content.likes == undefined) {
     content.likes = 0
@@ -29,7 +22,7 @@ blogsRouter.post('/', async (request, response) => {
     response.status(400).end()
 
   } else {
-    
+    content.user = user.id
     const blog = new Blog(content)
     const result = await blog.save()
     
@@ -42,16 +35,28 @@ blogsRouter.post('/', async (request, response) => {
   }
   })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const deleteId = request.params.id
-  await Blog.findByIdAndDelete(deleteId)
-  
-  response.status(204).end()
+  const user = request.user
+  const blog = await Blog.findById(deleteId)
+  if (blog == undefined) {
+    response.status(204).end()
+  }
+
+  if (blog.user == user.id) {
+    await Blog.findByIdAndDelete(deleteId)
+    response.status(204).end()
+  }
+  else {
+    return response.status(401).json({ error: 'unauthorized to delete blog' })
+  }
+
 })
 
 blogsRouter.put('/:id', async (request, response) => {
   const changeId = request.params.id
   const updatedBlog = await Blog.findByIdAndUpdate(changeId, request.body, {new: true})
+  .populate("user", { username: 1, name: 1 })
 
   response.json(updatedBlog)
 })

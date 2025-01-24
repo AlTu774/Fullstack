@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
     "name": "some1",  
-  "username": "user456",
+  "username": "user2",
   "password": "secretpass123"
 }
 
@@ -11,7 +11,7 @@ Content-Type: application/json
 
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXI0NTYiLCJpZCI6IjY3OGMxMjczNTZhNjY0NTIxNGQ2YjBhNiIsImlhdCI6MTczNzMwNTM2NX0.bAa7Uhu2U-RI90fW5IwzTliFvfQy4_i85EeMT6eQ3xY
+Authorization: Bearer
 
 { 
   "title": "Test blog 2",
