@@ -9,6 +9,8 @@ const helper = require('./blog_test_helper')
 const helperUser = require('./user_test_helper')
 const api = supertest(app)
 
+//blog_api and user_api tests work when they are ran separately by file
+
 describe("testing with database that has blogs in it", async () => { 
     let loginToken = null
 
@@ -193,6 +195,16 @@ describe("testing with database that has blogs in it", async () => {
             const blogs2 = response.body
             
             assert.deepEqual(blogs1,blogs2)
+        })
+
+        test("if a login token is not provided, the right error is raised", async () => {
+            const response = await api.get("/api/blogs")
+            const blogs = response.body
+            const newestBlog = blogs[blogs.length - 1]
+
+            await api
+            .delete(`/api/blogs/${newestBlog.id}`)
+            .expect(401)
         })
     })
 
