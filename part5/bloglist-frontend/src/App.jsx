@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,7 +15,7 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [message, setMessage] = useState({text:'', color:''})
-
+  const toggleRef = useRef()
   
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -49,17 +51,26 @@ const App = () => {
         setMessage({text:'', color:''})
       }, 5000)
     } else {
-    setUser(user)
+      setUser(result.data)
 
-    const loggedUser = JSON.stringify(user)
-    window.localStorage.clear()
-    window.localStorage.setItem('loggedUser', loggedUser)
+      const loggedUser = JSON.stringify(result.data)
+      window.localStorage.clear()
+      window.localStorage.setItem('loggedUser', loggedUser)
 
-    blogService.setToken(user.token)
-    setUsername('')
-    setPassword('')
+      blogService.setToken(result.data.token)
+      setUsername('')
+      setPassword('')
     }
   }
+
+  const handleChange = (change, value) => {
+    if (change == "username") {
+      setUsername(value)
+    } else if (change == "password") {
+      setPassword(value)
+    }
+  }
+
 
   const createHandler = async (event) => {
     event.preventDefault()
@@ -76,40 +87,12 @@ const App = () => {
     setAuthor('')
     setTitle('')
     setUrl('')
+    toggleRef.current.toggleVisibility()
     setMessage({text:`a new blog ${result.title} added by ${user.username}`, color:"green"})
     setTimeout(() => {
       setMessage({text:'', color:''})
     }, 5000)
   }
-
-  const loginForm = () => {
-    return(
-    <div>
-      <h1>Log in to the application</h1>
-      <Notification message={message}/>
-      <form onSubmit={loginHandler}>
-        <div>
-          username
-          <input
-            type="text"
-            value={username}
-            name="username"
-            onChange={({target}) => setUsername(target.value)} 
-        />
-        </div>
-        <div>
-          password
-          <input
-            type="password"
-            value={password}
-            name="password"
-            onChange={({target}) => setPassword(target.value)} 
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-    </div>
-    )}
 
 
   const createBlog = () => {
@@ -154,12 +137,21 @@ const App = () => {
   return (
     <div>
     {user === null ?
-      loginForm() :
+      <LoginForm 
+        loginHandler={loginHandler} 
+        message={message} 
+        handleChange={handleChange} 
+        username={username} 
+        password={password}
+      />
+       :
       <div>
         <h2>blogs</h2>
         <Notification message={message}/>
         <p>{user.username} has logged in <button onClick={logoutHandler}>logout</button> </p>
-        {createBlog()}
+        <Togglable buttonLabel="create" ref={toggleRef}>
+          {createBlog()}
+        </Togglable>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
