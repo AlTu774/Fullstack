@@ -8,8 +8,8 @@ import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  //const [username, setUsername] = useState('')
+  //const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -62,15 +62,6 @@ const App = () => {
       setPassword('')
     }
   }
-
-  const handleChange = (change, value) => {
-    if (change == "username") {
-      setUsername(value)
-    } else if (change == "password") {
-      setPassword(value)
-    }
-  }
-
 
   const createHandler = async (event) => {
     event.preventDefault()
@@ -140,9 +131,6 @@ const App = () => {
       <LoginForm 
         loginHandler={loginHandler} 
         message={message} 
-        handleChange={handleChange} 
-        username={username} 
-        password={password}
       />
        :
       <div>

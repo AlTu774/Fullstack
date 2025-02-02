@@ -1,6 +1,17 @@
 import Notification from "./Notification"
+import { useState } from "react"
 
-const LoginForm = ({loginHandler, message, handleChange, username, password}) => {
+const LoginForm = ({loginHandler, message}) => {
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+
+    const handleChange = (change, value) => {
+        if (change == "username") {
+          setUsername(value)
+        } else if (change == "password") {
+          setPassword(value)
+        }
+      }
   
     return(
     <div>
