@@ -137,7 +137,7 @@ const App = () => {
         <h2>blogs</h2>
         <Notification message={message}/>
         <p>{user.username} has logged in <button onClick={logoutHandler}>logout</button> </p>
-        <Togglable buttonLabel="create" ref={toggleRef}>
+        <Togglable buttonLabel={["create","cancel"]} ref={toggleRef}>
           {createBlog()}
         </Togglable>
         {blogs.map(blog =>
