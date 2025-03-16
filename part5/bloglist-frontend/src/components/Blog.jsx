@@ -1,5 +1,5 @@
-import Togglable from "./Togglable"
-import blogService from "../services/blogs"
+import Togglable from './Togglable'
+import blogService from '../services/blogs'
 
 const Blog = ({ blog, setBlogs, user }) => {
 
@@ -20,24 +20,24 @@ const Blog = ({ blog, setBlogs, user }) => {
   }
 
   const blogStyle = {
-    outline: "black",
-    outlineStyle: "solid",
-    padding: "10px",
-    marginTop: "10px"
+    outline: 'black',
+    outlineStyle: 'solid',
+    padding: '10px',
+    marginTop: '10px'
   }
 
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
       <div>
-        <Togglable buttonLabel={["view","hide"]} ref={null}>
+        <Togglable buttonLabel={['view','hide']} ref={null}>
           <p>{blog.url}</p>
           <p>{blog.likes}<button onClick={async() => handleLikeClick()}>like</button></p>
           <p>{blog.user.username}</p>
-          {(user.username == blog.user.username) ? <button onClick={async() => handleRemoveClick()}>remove</button> : null}
+          {(user.username === blog.user.username) ? <button onClick={async() => handleRemoveClick()}>remove</button> : null}
         </Togglable>
       </div>
-    </div> 
+    </div>
   )
 }
 

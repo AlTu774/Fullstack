@@ -21,10 +21,10 @@ const create = async (newObject) => {
 }
 
 const addLike = async (blog) => {
-  const copyBlog = {...blog}
-copyBlog.likes = copyBlog.likes+1
+  const copyBlog = { ...blog }
+  copyBlog.likes = copyBlog.likes+1
   try {
-    const request = await axios.put(baseUrl+'/'+blog.id, {likes:copyBlog.likes})
+    const request = await axios.put(baseUrl+'/'+blog.id, { likes:copyBlog.likes })
     return (request.data)
   } catch (exception) {
     return(exception.response.status)
@@ -33,16 +33,16 @@ copyBlog.likes = copyBlog.likes+1
 
 const remove = async (blog, user) => {
   if (window.confirm('Remove '+blog.title+' by '+blog.author) ) {
-    const request = await axios.delete(baseUrl+'/'+blog.id, {headers: {
-      Authorization: "Bearer "+user.token
+    const request = await axios.delete(baseUrl+'/'+blog.id, { headers: {
+      Authorization: 'Bearer '+user.token
     },  data: {
       user
-    }})
+    } })
     return request.status
   }
 }
 
-export default { 
+export default {
   setToken,
   getAll,
   create,
