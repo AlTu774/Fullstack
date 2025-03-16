@@ -31,9 +31,21 @@ copyBlog.likes = copyBlog.likes+1
   }
 }
 
+const remove = async (blog, user) => {
+  if (window.confirm('Remove '+blog.title+' by '+blog.author) ) {
+    const request = await axios.delete(baseUrl+'/'+blog.id, {headers: {
+      Authorization: "Bearer "+user.token
+    },  data: {
+      user
+    }})
+    return request.status
+  }
+}
+
 export default { 
   setToken,
   getAll,
   create,
-  addLike
+  addLike,
+  remove
 }

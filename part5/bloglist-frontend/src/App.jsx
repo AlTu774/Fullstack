@@ -41,8 +41,7 @@ const App = () => {
     blogService.setToken(null)
   }
 
-
-  const loginHandler = async (event) => {
+  const loginHandler = async (event, username, password) => {
     event.preventDefault()
     const result = await loginService.login({username, password})
 
@@ -59,8 +58,6 @@ const App = () => {
       window.localStorage.setItem('loggedUser', loggedUser)
 
       blogService.setToken(result.data.token)
-      setUsername('')
-      setPassword('')
     }
   }
 
@@ -130,8 +127,9 @@ const App = () => {
     <div>
     {user === null ?
       <LoginForm 
-        loginHandler={loginHandler} 
         message={message} 
+        setUser={setUser}
+        loginHandler={loginHandler}
       />
        :
       <div>
@@ -142,7 +140,7 @@ const App = () => {
           {createBlog()}
         </Togglable>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
+          <Blog key={blog.id} blog={blog} setBlogs={setBlogs} user={user} />
         )}
       </div>
     }
