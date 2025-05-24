@@ -27,14 +27,18 @@ const Blog = ({ blog, setBlogs, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      {blog.title} {blog.author}
+    <div style={blogStyle} className='blog'>
+      <div className='testBlog'>
+        {blog.title} {blog.author}
+      </div>
       <div>
         <Togglable buttonLabel={['view','hide']} ref={null}>
-          <p>{blog.url}</p>
-          <p>{blog.likes}<button onClick={async() => handleLikeClick()}>like</button></p>
-          <p>{blog.user.username}</p>
-          {(user.username === blog.user.username) ? <button onClick={async() => handleRemoveClick()}>remove</button> : null}
+          <div data-testid="toggletest">
+            <p>{blog.url}</p>
+            <p>{blog.likes}<button onClick={async() => handleLikeClick()}>like</button></p>
+            <p>{blog.user.username}</p>
+            {(user.username === blog.user.username) ? <button onClick={async() => handleRemoveClick()}>remove</button> : null}
+          </div>
         </Togglable>
       </div>
     </div>
