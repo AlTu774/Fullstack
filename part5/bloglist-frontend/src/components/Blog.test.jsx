@@ -1,24 +1,24 @@
-//import { describe, expect, test } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
-import Blog from './Blog'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect } from 'vitest'
 import Togglable from './Togglable'
+import Blog from './Blog'
 
 describe('<Blog/>', () => {
-  test('renders blogs title and author, but not URL or likes by default', () => {
-    const blog = {
-      title:'First Title',
-      author:'some author',
-      url:'/localhost',
-      likes:3363,
-      user:{ username:'testUser' }
-    }
-    const user = { username:'testUser' }
-    const setBlog = vi.fn()
+  const blog = {
+    title:'First Title',
+    author:'some author',
+    url:'/localhost',
+    likes:3363,
+    user:{ username:'testUser' }
+  }
+  const userBlog = { username:'testUser' }
+  const mockHandleLike = vi.fn()
+  const mockUpdateBlogs = vi.fn()
 
-    const { container } = render(<Blog blog={ blog } setBlog={ setBlog } user={ user }/>)
+  test('renders blog title and author, but not URL or likes by default', () => {
+    const { container } = render(<Blog blog={ blog } user={ userBlog } handleLike={ mockHandleLike } updateBlogs={ mockUpdateBlogs }/>)
     const div = container.querySelector('.testBlog')
     expect(div).toHaveTextContent('First Title some author')
 
@@ -26,14 +26,15 @@ describe('<Blog/>', () => {
     expect(toggleDiv).toHaveStyle('display: none')
   })
 
-/*
-  test('after clicking toggle button, URL and likes are seen', () => {
-    const user = { username:'testUser'}
-    const setBlog = vi.fn()
-    const mockHandler = vi.
+  test('clicking the button twice results in event handler being called twice', async () => {
+    const userE = userEvent.setup()
+    render(<Blog blog={ blog } user={ userBlog } handleLike={ mockHandleLike } updateBlogs={ mockUpdateBlogs }/>)
+    const button = screen.getByText('like')
+    await userE.click(button)
+    await userE.click(button)
 
+    expect(mockHandleLike.mock.calls).toHaveLength(2)
   })
-*/
 })
 
 

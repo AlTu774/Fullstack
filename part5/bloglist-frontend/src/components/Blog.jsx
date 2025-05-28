@@ -1,18 +1,24 @@
 import Togglable from './Togglable'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, setBlogs, user }) => {
+const Blog = ({ blog, user, handleLike, updateBlogs }) => {
+  //const handleLikeClick = async() => {
+  //  await blogService.addLike(blog)
+  //  updateBlogs()
+  //}
 
   const handleLikeClick = async() => {
-    await blogService.addLike(blog)
+    await handleLike(blog)
     updateBlogs()
   }
-
+  /*
   const updateBlogs = async() => {
-    const blogs = await blogService.getAll()
+    //const blogs = await blogService.getAll()
+    const blogs = await getBlogs()
     blogs.sort((a,b) => b.likes - a.likes)
-    setBlogs( blogs )
+    setBlogs(blogs)
   }
+  */
 
   const handleRemoveClick = async() => {
     await blogService.remove(blog, user)
