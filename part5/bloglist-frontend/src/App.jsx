@@ -18,6 +18,7 @@ const App = () => {
     blogService.getAll().then(newBlogs => {
       newBlogs.sort((a,b) => b.likes - a.likes)
       setBlogs( newBlogs )
+      toggleRef.current.toggleVisibility()
     })
   }, [])
 
