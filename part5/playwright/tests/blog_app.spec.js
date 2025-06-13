@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-import loginWith from './helper'
+const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -21,19 +21,12 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      //await page.getByTestId('username').fill('user123')
-      //await page.getByTestId('password').fill('pass123')
-      //await page.getByRole('button', {name:'login'}).click()
       await loginWith(page, 'user123', 'pass123')
 
       await expect(page.getByText('user123 has logged in')).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      /*await page.getByTestId('username').fill('user3')
-      await page.getByTestId('password').fill('pass')
-      await page.getByRole('button', {name:'login'}).click()
-      */
       await loginWith(page, 'user3', 'pass')
 
       await expect(page.getByText('wrong username or password')).toBeVisible()
@@ -46,13 +39,16 @@ describe('Blog app', () => {
       
       })
       test('a new blog can be created', async ({ page }) => {
-        await page.getByRole('button', {name: 'create'}).click()
-        await page.getByPlaceholder('title').fill('New Blog')
-        await page.getByPlaceholder('author').fill('Some author')
-        await page.getByPlaceholder('url').fill('site.com')
-        await page.getByRole('button', {name: 'create'}).click()
-
+        await createBlog(page, 'New Blog', 'Some author', 'site.com')
         await expect(page.getByText('New Blog Some author')).toBeVisible()
+      })
+
+      test('a blog in the database can be liked', async ({ page }) => {
+        await createBlog(page, 'New Blog', 'Some author', 'site.com')
+        await page.getByRole('button', {name:'view'}).click()
+        await expect(page.getByTestId('likes')).toHaveText('0like') 
+        await page.getByRole('button', {name:'like'}).click()
+        await expect(page.getByTestId('likes')).toHaveText('1like')
       })
     })
   })

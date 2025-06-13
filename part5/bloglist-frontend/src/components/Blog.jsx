@@ -2,23 +2,11 @@ import Togglable from './Togglable'
 import blogService from '../services/blogs'
 
 const Blog = ({ blog, user, handleLike, updateBlogs }) => {
-  //const handleLikeClick = async() => {
-  //  await blogService.addLike(blog)
-  //  updateBlogs()
-  //}
 
   const handleLikeClick = async() => {
     await handleLike(blog)
     updateBlogs()
   }
-  /*
-  const updateBlogs = async() => {
-    //const blogs = await blogService.getAll()
-    const blogs = await getBlogs()
-    blogs.sort((a,b) => b.likes - a.likes)
-    setBlogs(blogs)
-  }
-  */
 
   const handleRemoveClick = async() => {
     await blogService.remove(blog, user)
@@ -41,7 +29,7 @@ const Blog = ({ blog, user, handleLike, updateBlogs }) => {
         <Togglable buttonLabel={['view','hide']} ref={null}>
           <div data-testid="toggletest">
             <p>{blog.url}</p>
-            <p>{blog.likes}<button onClick={async() => handleLikeClick()}>like</button></p>
+            <p data-testid='likes'>{blog.likes}<button onClick={async() => handleLikeClick()}>like</button></p>
             <p>{blog.user.username}</p>
             {(user.username === blog.user.username) ? <button onClick={async() => handleRemoveClick()}>remove</button> : null}
           </div>
