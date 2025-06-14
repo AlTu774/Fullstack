@@ -18,10 +18,11 @@ const App = () => {
     blogService.getAll().then(newBlogs => {
       newBlogs.sort((a,b) => b.likes - a.likes)
       setBlogs( newBlogs )
-      toggleRef.current.toggleVisibility()
+      if (typeof toggleRef.current !== 'undefined') {
+        toggleRef.current.toggleVisibility()
+      }
     })
   }, [])
-
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem('loggedUser')
@@ -30,10 +31,17 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
+    blogService.getAll().then(newBlogs => {
+      newBlogs.sort((a,b) => b.likes - a.likes)
+      setBlogs( newBlogs )
+      if (typeof toggleRef.current !== 'undefined') {
+        toggleRef.current.toggleVisibility()
+      }
+    })
   }, [])
 
 
-  const logoutHandler = () => {
+  const logoutHandler = async() => {
     window.localStorage.clear()
     setUser(null)
     blogService.setToken(null)
@@ -54,7 +62,6 @@ const App = () => {
       const loggedUser = JSON.stringify(result.data)
       window.localStorage.clear()
       window.localStorage.setItem('loggedUser', loggedUser)
-
       blogService.setToken(result.data.token)
     }
   }
@@ -68,6 +75,14 @@ const App = () => {
     setTimeout(() => {
       setMessage({ text:'', color:'' })
     }, 5000)
+
+    blogService.getAll().then(newBlogs => {
+      newBlogs.sort((a,b) => b.likes - a.likes)
+      setBlogs( newBlogs )
+      if (typeof toggleRef.current !== 'undefined') {
+        toggleRef.current.toggleVisibility()
+      }
+    })
   }
 
   const handleLike = async(blog) => {

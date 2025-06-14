@@ -11,6 +11,13 @@ describe('Blog app', () => {
         password: 'pass123'
 
       }})
+      await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: '2nd',
+        username: 'user2',
+        password: 'pass2'
+
+      }})
     await page.goto('http://localhost:5173')
   })
 
@@ -40,6 +47,7 @@ describe('Blog app', () => {
       })
       test('a new blog can be created', async ({ page }) => {
         await createBlog(page, 'New Blog', 'Some author', 'site.com')
+        await page.waitForTimeout(6000)
         await expect(page.getByText('New Blog Some author')).toBeVisible()
       })
 
@@ -48,7 +56,28 @@ describe('Blog app', () => {
         await page.getByRole('button', {name:'view'}).click()
         await expect(page.getByTestId('likes')).toHaveText('0like') 
         await page.getByRole('button', {name:'like'}).click()
+        await page.waitForTimeout(6000)
         await expect(page.getByTestId('likes')).toHaveText('1like')
+      })
+
+      test('blogs can only be deleted by users that created them', async ({ page }) => {
+        await createBlog(page, 'New Blog', 'Some author', 'site.com')
+        await page.waitForTimeout(6000)
+        await page.getByRole('button', {name:'view'}).click()
+        page.on('dialog', dialog => dialog.accept())
+        await page.getByRole('button', {name:'remove'}).click()
+        await page.waitForTimeout(6000)
+        await expect(page.getByText('New Blog Some author')).not.toBeVisible()
+      })
+
+      test("only a blog's creator can see it's delete button", async ({ page }) => {
+        await createBlog(page, 'New Blog', 'Some author', 'site.com')
+        await page.waitForTimeout(6000)
+        await page.getByRole('button', {name:'logout'}).click()
+
+        await loginWith(page, 'user2', 'pass2')
+        await page.getByRole('button', {name:'view'}).click()
+        await expect(page.getByText('remove')).not.toBeVisible()
       })
     })
   })
