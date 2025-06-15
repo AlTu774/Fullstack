@@ -26,7 +26,7 @@ const Blog = ({ blog, user, handleLike, updateBlogs }) => {
         {blog.title} {blog.author}
       </div>
       <div>
-        <Togglable buttonLabel={['view','hide']} ref={null}>
+        <Togglable buttonLabel={['view','hide']} ref={null} state={false}>
           <div data-testid="toggletest">
             <p>{blog.url}</p>
             <p data-testid='likes'>{blog.likes}<button onClick={async() => handleLikeClick()}>like</button></p>

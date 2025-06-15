@@ -43,11 +43,9 @@ describe('Blog app', () => {
     describe('When logged in', () => {
       beforeEach(async ({ page }) => {
         await loginWith(page, 'user123', 'pass123')
-      
       })
       test('a new blog can be created', async ({ page }) => {
         await createBlog(page, 'New Blog', 'Some author', 'site.com')
-        await page.waitForTimeout(6000)
         await expect(page.getByText('New Blog Some author')).toBeVisible()
       })
 
@@ -56,28 +54,65 @@ describe('Blog app', () => {
         await page.getByRole('button', {name:'view'}).click()
         await expect(page.getByTestId('likes')).toHaveText('0like') 
         await page.getByRole('button', {name:'like'}).click()
-        await page.waitForTimeout(6000)
         await expect(page.getByTestId('likes')).toHaveText('1like')
       })
 
       test('blogs can only be deleted by users that created them', async ({ page }) => {
         await createBlog(page, 'New Blog', 'Some author', 'site.com')
-        await page.waitForTimeout(6000)
         await page.getByRole('button', {name:'view'}).click()
         page.on('dialog', dialog => dialog.accept())
         await page.getByRole('button', {name:'remove'}).click()
-        await page.waitForTimeout(6000)
         await expect(page.getByText('New Blog Some author')).not.toBeVisible()
       })
 
       test("only a blog's creator can see it's delete button", async ({ page }) => {
         await createBlog(page, 'New Blog', 'Some author', 'site.com')
-        await page.waitForTimeout(6000)
         await page.getByRole('button', {name:'logout'}).click()
 
         await loginWith(page, 'user2', 'pass2')
         await page.getByRole('button', {name:'view'}).click()
         await expect(page.getByText('remove')).not.toBeVisible()
+      })
+
+      test("blog likes are sorted in descending order", async ({page}) => {
+        await createBlog(page, 'New Blog1', 'Some author', 'site.com')
+        await createBlog(page, 'New Blog2', 'Some author', 'site.com')
+        await createBlog(page, 'New Blog3', 'Some author', 'site.com')
+        await page.waitForTimeout(6000)
+
+        const viewButtons = await page.getByRole('button', {name:'view'}).elementHandles()
+        await viewButtons[0].click()
+        await page.getByRole('button', {name:'like'}).click()
+        await page.getByRole('button', {name:'like'}).waitFor()
+        await page.getByRole('button', {name:'like'}).click()
+        await page.getByRole('button', {name:'hide'}).click()
+
+        await viewButtons[1].click()
+        await page.getByRole('button', {name:'like'}).click()
+        await page.getByRole('button', {name:'like'}).waitFor()
+        await page.getByRole('button', {name:'like'}).click()
+        await page.getByRole('button', {name:'like'}).waitFor()
+        await page.getByRole('button', {name:'like'}).click()
+        await page.getByRole('button', {name:'hide'}).click()
+
+        await viewButtons[2].click()
+        await page.getByRole('button', {name:'like'}).click()
+        await page.getByRole('button', {name:'hide'}).click()
+        await page.waitForTimeout(6000)
+
+        const viewButtons2 = await page.getByRole('button', {name:'view'}).elementHandles()
+        await viewButtons2[0].click()
+        await expect(page.getByText('3like')).toBeVisible()
+        await page.getByRole('button', {name:'hide'}).click()
+
+        await viewButtons2[1].click()
+        await expect(page.getByText('2like')).toBeVisible()
+        await page.getByRole('button', {name:'hide'}).click()
+
+        await viewButtons2[2].click()
+        await expect(page.getByText('1like')).toBeVisible()
+        await page.getByRole('button', {name:'hide'}).click()
+        
       })
     })
   })

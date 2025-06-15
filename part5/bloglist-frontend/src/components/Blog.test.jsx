@@ -50,7 +50,7 @@ describe('<Togglable', () => {
 
   beforeEach(() => {
     container = render(
-      <Togglable buttonLabel={['view', 'hide']}>
+      <Togglable buttonLabel={['view', 'hide']} state={false}>
         <div data-testid='toggle'>
           <p>{blog.url}</p>
           <p>{blog.likes}</p>

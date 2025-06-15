@@ -18,9 +18,9 @@ const App = () => {
     blogService.getAll().then(newBlogs => {
       newBlogs.sort((a,b) => b.likes - a.likes)
       setBlogs( newBlogs )
-      if (typeof toggleRef.current !== 'undefined') {
-        toggleRef.current.toggleVisibility()
-      }
+      //if (typeof toggleRef.current !== 'undefined') {
+      //toggleRef.current.toggleVisibility()
+      //}
     })
   }, [])
 
@@ -34,9 +34,9 @@ const App = () => {
     blogService.getAll().then(newBlogs => {
       newBlogs.sort((a,b) => b.likes - a.likes)
       setBlogs( newBlogs )
-      if (typeof toggleRef.current !== 'undefined') {
-        toggleRef.current.toggleVisibility()
-      }
+      //if (typeof toggleRef.current !== 'undefined') {
+      //toggleRef.current.toggleVisibility()
+      //}
     })
   }, [])
 
@@ -63,6 +63,7 @@ const App = () => {
       window.localStorage.clear()
       window.localStorage.setItem('loggedUser', loggedUser)
       blogService.setToken(result.data.token)
+      //window.location.reload()
     }
   }
 
@@ -70,7 +71,7 @@ const App = () => {
     const result = await blogService.create(newBlog)
     const newBlogs = blogs.concat(result)
     setBlogs(newBlogs)
-    toggleRef.current.toggleVisibility()
+    //toggleRef.current.toggleVisibility()
     setMessage({ text:`a new blog ${ result.title } added by ${ user.username }`, color:'green' })
     setTimeout(() => {
       setMessage({ text:'', color:'' })
@@ -79,9 +80,9 @@ const App = () => {
     blogService.getAll().then(newBlogs => {
       newBlogs.sort((a,b) => b.likes - a.likes)
       setBlogs( newBlogs )
-      if (typeof toggleRef.current !== 'undefined') {
-        toggleRef.current.toggleVisibility()
-      }
+      //if (typeof toggleRef.current !== 'undefined') {
+      //toggleRef.current.toggleVisibility()
+      //}
     })
   }
 
@@ -119,7 +120,7 @@ const App = () => {
           <h2>blogs</h2>
           <Notification message={message}/>
           <p>{user.username} has logged in <button onClick={logoutHandler}>logout</button> </p>
-          <Togglable buttonLabel={['create','cancel']} ref={toggleRef}>
+          <Togglable buttonLabel={['create','cancel']} ref={toggleRef} state={true}>
             <CreateBlogForm createHandler={createHandler}/>
           </Togglable>
           {blogs.map(blog =>
