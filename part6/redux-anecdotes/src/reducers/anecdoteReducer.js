@@ -30,6 +30,14 @@ const reducer = (state = initialState, action) => {
       }
       return state.map(anecdote => anecdote.id !== rightA.id ? anecdote : changedAnecdote )
     }
+    case 'NEW_ANECDOTE': {
+      const newAnecdote = {
+        content: action.payload.content,
+        id: getId(),
+        votes: 0
+      }
+      return state.concat(newAnecdote)
+    }
   }
   console.log('state now: ', state)
   console.log('action', action)
