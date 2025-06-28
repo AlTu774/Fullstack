@@ -1,9 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
+import { createMessage } from '../reducers/notificationReducer'
+import Notification from '../components/Notification'
 
 const AnecdoteList = () => {
   const currentFilter =  useSelector(state => state.filter)
-  const anecdotesStore = useSelector(state => {
+  const anecdotesStore =
+   useSelector(state => {
     if (currentFilter) {
       return state.anecdote.filter(a => a.content.toLowerCase().includes(currentFilter.toLowerCase()))
     }
@@ -13,13 +16,16 @@ const AnecdoteList = () => {
   let anecdotes = anecdotesSCopy.sort((a, b) => b.votes - a.votes)
   const dispatch = useDispatch()
   
-  const vote = (id) => {
-    dispatch(voteAnecdote(id))
+  const vote = (anecdote) => {
+    dispatch(voteAnecdote(anecdote.id))
+    const text = "you voted '"+anecdote.content+"'"
+    dispatch(createMessage(text))
   }
 
   return (
     <div>
       <h2>Anecdotes</h2>
+      <Notification/>
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
@@ -27,7 +33,7 @@ const AnecdoteList = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       )}
