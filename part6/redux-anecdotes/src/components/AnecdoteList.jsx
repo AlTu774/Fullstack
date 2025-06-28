@@ -9,7 +9,8 @@ const AnecdoteList = () => {
     }
     return state.anecdote
   })
-  let anecdotes = anecdotesStore.sort((a, b) => a.value - b.value)
+  const anecdotesSCopy = [...anecdotesStore] 
+  let anecdotes = anecdotesSCopy.sort((a, b) => b.votes - a.votes)
   const dispatch = useDispatch()
   
   const vote = (id) => {
