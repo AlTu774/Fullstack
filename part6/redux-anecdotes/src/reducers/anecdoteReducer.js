@@ -9,13 +9,6 @@ const anecdoteSlice = createSlice({
   reducers: {
     updateAnecdote(state = initialState, action) {
       const changedAnecdote = action.payload
-      //const rightA = state.find(a => a.id == action.payload)
-      //const newVotes = rightA.votes+1
-      //const changedAnecdote = {
-      //  ...rightA,
-      //  votes: newVotes
-      //}
-      //const changedAnecdote = anecdoteService.addLike(rightA.id)
       return state.map(anecdote => anecdote.id !== changedAnecdote.id ? anecdote : changedAnecdote )
     },
     appendAnecdote(state = initialState, action) {
