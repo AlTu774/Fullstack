@@ -4,7 +4,7 @@ import { createAnecdote } from "../requests"
 const AnecdoteForm = () => {
   const queryClient = useQueryClient()
   const newAnecdoteMutation = useMutation({
-    mutationFn:createAnecdote,
+    mutationFn:  createAnecdote,
     onSuccess: () => {
       queryClient.invalidateQueries('anecdotes')
     }
@@ -18,7 +18,6 @@ const AnecdoteForm = () => {
       content: content,
       votes: 0
     })
-    console.log('new anecdote')
 }
 
   return (
