@@ -1,7 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createAnecdote } from "../requests"
+import { useContext } from "react"
+import MessageContext from "../messageContext"
 
 const AnecdoteForm = () => {
+  const [message, dispatch] = useContext(MessageContext)
+
   const queryClient = useQueryClient()
   const newAnecdoteMutation = useMutation({
     mutationFn:  createAnecdote,
@@ -17,6 +21,10 @@ const AnecdoteForm = () => {
     newAnecdoteMutation.mutate({
       content: content,
       votes: 0
+    })
+    dispatch({
+      type: "SET",
+      payload: 'added anecdote "'+content+'"'
     })
 }
 
