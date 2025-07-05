@@ -11,6 +11,14 @@ const AnecdoteForm = () => {
     mutationFn:  createAnecdote,
     onSuccess: () => {
       queryClient.invalidateQueries('anecdotes')
+    },
+    onError: (error) => {
+      if (error.request.status=="400") {
+        dispatch({
+          type: "SET",
+          payload: 'too short anecdote, must have length 5 or more'
+        })
+      }
     }
   })
 
