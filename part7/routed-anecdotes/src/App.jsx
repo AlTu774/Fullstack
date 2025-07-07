@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
-  BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link,
+  useMatch
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -10,9 +10,17 @@ const Menu = () => {
   }
   return (
     <div>
-      <Link style={padding} to='/'>anecdote</Link>
+      <Link style={padding} to='/anecdotes'>anecdotes</Link>
       <Link style={padding} to='/create'>create new</Link>
       <Link style={padding} to='/about'>about</Link>
+    </div>
+  )
+}
+
+const Anecdote = ({anecdote}) => {
+  return (
+    <div>
+      <h2>{anecdote.content} by {anecdote.author}</h2>
     </div>
   )
 }
@@ -21,7 +29,7 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
     </ul>
   </div>
 )
@@ -105,6 +113,11 @@ const App = () => {
     }
   ])
 
+  const match = useMatch('/anecdotes/:id')
+  const anecdote = match 
+    ? anecdotes.find(a => a.id === Number(match.params.id))
+    : null
+
   const [notification, setNotification] = useState('')
 
   const addNew = (anecdote) => {
@@ -116,27 +129,27 @@ const App = () => {
     anecdotes.find(a => a.id === id)
 
   const vote = (id) => {
-    const anecdote = anecdoteById(id)
+    const voteAnecdote = anecdoteById(id)
 
     const voted = {
       ...anecdote,
-      votes: anecdote.votes + 1
+      votes: voteAnecdote.votes + 1
     }
 
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
-
+ 
   return (
     <div>
-      <Router>
         <h1>Software anecdotes</h1>
         <Menu />
         <Routes>
+          <Route path='/anecdotes' element={<AnecdoteList anecdotes={anecdotes} />} />
+          <Route path='/anecdotes/:id' element={<Anecdote anecdote={anecdote}/>} />
           <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
           <Route path='/create' element={<CreateNew addNew={addNew} />} />
           <Route path='/about' element={<About />} />
         </Routes>
-      </Router>
       <Footer />
     </div>
   )
