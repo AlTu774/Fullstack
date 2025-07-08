@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Routes, Route, Link,
   useMatch, useNavigate
@@ -61,6 +61,9 @@ const CreateNew = (props) => {
   const content = useField('content')
   const author = useField('author')
   const info = useField('info')
+  const {resetField:r1, ...content2} = content
+  const {resetField:r2, ...author2} = author
+  const {resetField:r3, ...info2} = info
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -72,23 +75,31 @@ const CreateNew = (props) => {
     })
   }
 
+  const handleReset = (event) => {
+    event.preventDefault()
+    content.resetField()
+    author.resetField()
+    info.resetField()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...content2} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...author2} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...info2} />
         </div>
         <button>create</button>
+        <button onClick={handleReset}>reset</button>
       </form>
     </div>
   )
