@@ -1,0 +1,21 @@
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+    "name": "some1",  
+  "username": "user2",
+  "password": "secretpass123"
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer
+
+{ 
+  "title": "Test blog 2",
+  "author": "Mr. Test",
+  "url": "/test/url",
+  "likes": 5
+}
