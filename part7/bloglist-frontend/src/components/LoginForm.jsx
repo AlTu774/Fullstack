@@ -1,7 +1,7 @@
 import Notification from './Notification'
 import { useState } from 'react'
 
-const LoginForm = ({ loginHandler, message }) => {
+const LoginForm = ({ loginHandler }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -16,7 +16,7 @@ const LoginForm = ({ loginHandler, message }) => {
   return (
     <div>
       <h1>Log in to the application</h1>
-      <Notification message={message} />
+      <Notification />
       <form onSubmit={(event) => loginHandler(event, username, password)}>
         <div>
           username

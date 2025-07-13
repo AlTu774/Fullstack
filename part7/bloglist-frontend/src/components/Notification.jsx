@@ -1,11 +1,14 @@
-const Notification = ({ message }) => {
+import { useSelector } from 'react-redux'
+
+const Notification = () => {
+  const message = useSelector(state  => state.notification)
   if (message.text === '') {
     return
   }
 
   const texStyle = {
     color: message.color,
-    outline: message.color,
+    outlineColor: message.color,
     outlineStyle: 'solid',
     background: 'lightgray',
   }

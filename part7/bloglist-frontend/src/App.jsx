@@ -8,19 +8,19 @@ import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
 import PropTypes from 'prop-types'
 import { setMessage, resetMessage } from './reducers/notificationReducer'
+import { setBlogs } from './reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const toggleRef = useRef()
   const dispatch = useDispatch()
-  const message = useSelector(state => state)
+  const blogs = useSelector(state => state.blog)
 
   useEffect(() => {
     blogService.getAll().then((newBlogs) => {
       newBlogs.sort((a, b) => b.likes - a.likes)
-      setBlogs(newBlogs)
+      dispatch(setBlogs(newBlogs))
     })
   }, [])
 
@@ -33,7 +33,7 @@ const App = () => {
     }
     blogService.getAll().then((newBlogs) => {
       newBlogs.sort((a, b) => b.likes - a.likes)
-      setBlogs(newBlogs)
+      dispatch(setBlogs(newBlogs))
     })
   }, [])
 
@@ -52,7 +52,7 @@ const App = () => {
         text: 'wrong username or password', color: 'red'
       }))
       setTimeout(() => {
-        dispatch(setMessage({ text: '', color: '' }))
+        dispatch(resetMessage())
       }, 5000)
     } else {
       setUser(result.data)
@@ -67,7 +67,7 @@ const App = () => {
   const createHandler = async (newBlog) => {
     const result = await blogService.create(newBlog)
     const newBlogs = blogs.concat(result)
-    setBlogs(newBlogs)
+    dispatch(setBlogs(newBlogs))
 
     dispatch(setMessage({
       text: `a new blog ${result.title} added by ${user.username}`,
@@ -92,25 +92,21 @@ const App = () => {
   const updateBlogs = async () => {
     const blogs = await blogService.getAll()
     blogs.sort((a, b) => b.likes - a.likes)
-    setBlogs(blogs)
+    dispatch(setBlogs(blogs))
   }
 
   LoginForm.propTypes = {
     loginHandler: PropTypes.func.isRequired,
   }
 
-  Notification.prototype = {
-    message: PropTypes.object.isRequired,
-  }
-
   return (
     <div>
       {user === null ? (
-        <LoginForm message={message} loginHandler={loginHandler} />
+        <LoginForm loginHandler={loginHandler} />
       ) : (
         <div>
           <h2>blogs</h2>
-          <Notification message={message} />
+          <Notification />
           <p>
             {user.username} has logged in{' '}
             <button onClick={logoutHandler}>logout</button>{' '}
