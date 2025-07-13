@@ -7,12 +7,15 @@ import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
 import PropTypes from 'prop-types'
+import { setMessage, resetMessage } from './reducers/notificationReducer'
+import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState({ text: '', color: '' })
   const toggleRef = useRef()
+  const dispatch = useDispatch()
+  const message = useSelector(state => state)
 
   useEffect(() => {
     blogService.getAll().then((newBlogs) => {
@@ -45,9 +48,11 @@ const App = () => {
     const result = await loginService.login({ username, password })
 
     if (result === 401) {
-      setMessage({ text: 'wrong username or password', color: 'red' })
+      dispatch(setMessage({
+        text: 'wrong username or password', color: 'red'
+      }))
       setTimeout(() => {
-        setMessage({ text: '', color: '' })
+        dispatch(setMessage({ text: '', color: '' }))
       }, 5000)
     } else {
       setUser(result.data)
@@ -63,12 +68,13 @@ const App = () => {
     const result = await blogService.create(newBlog)
     const newBlogs = blogs.concat(result)
     setBlogs(newBlogs)
-    setMessage({
+
+    dispatch(setMessage({
       text: `a new blog ${result.title} added by ${user.username}`,
-      color: 'green',
-    })
+      color: 'green'
+    }))
     setTimeout(() => {
-      setMessage({ text: '', color: '' })
+      dispatch(resetMessage())
     }, 5000)
 
     blogService.getAll().then((newBlogs) => {
