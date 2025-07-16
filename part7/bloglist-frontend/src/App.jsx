@@ -8,7 +8,7 @@ import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
 import PropTypes from 'prop-types'
 import { setMessage, resetMessage } from './reducers/notificationReducer'
-import { setBlogs } from './reducers/blogReducer'
+import { getAllBlogs, createBlog } from './reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
@@ -18,10 +18,7 @@ const App = () => {
   const blogs = useSelector(state => state.blog)
 
   useEffect(() => {
-    blogService.getAll().then((newBlogs) => {
-      newBlogs.sort((a, b) => b.likes - a.likes)
-      dispatch(setBlogs(newBlogs))
-    })
+    dispatch(getAllBlogs())
   }, [])
 
   useEffect(() => {
@@ -31,10 +28,7 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-    blogService.getAll().then((newBlogs) => {
-      newBlogs.sort((a, b) => b.likes - a.likes)
-      dispatch(setBlogs(newBlogs))
-    })
+    dispatch(getAllBlogs())
   }, [])
 
   const logoutHandler = async () => {
@@ -65,34 +59,17 @@ const App = () => {
   }
 
   const createHandler = async (newBlog) => {
-    const result = await blogService.create(newBlog)
-    const newBlogs = blogs.concat(result)
-    dispatch(setBlogs(newBlogs))
+    dispatch(createBlog(newBlog))
 
     dispatch(setMessage({
-      text: `a new blog ${result.title} added by ${user.username}`,
+      text: `a new blog ${newBlog.title} added by ${user.username}`,
       color: 'green'
     }))
     setTimeout(() => {
       dispatch(resetMessage())
     }, 5000)
 
-    blogService.getAll().then((newBlogs) => {
-      newBlogs.sort((a, b) => b.likes - a.likes)
-      setBlogs(newBlogs)
-    })
-  }
-
-  const handleLike = async (blog) => {
-    await blogService.addLike(blog)
-    const blogs = await blogService.getAll()
-    return blogs
-  }
-
-  const updateBlogs = async () => {
-    const blogs = await blogService.getAll()
-    blogs.sort((a, b) => b.likes - a.likes)
-    dispatch(setBlogs(blogs))
+    dispatch(getAllBlogs())
   }
 
   LoginForm.propTypes = {
@@ -123,8 +100,6 @@ const App = () => {
               key={blog.id}
               blog={blog}
               user={user}
-              handleLike={handleLike}
-              updateBlogs={updateBlogs}
             />
           ))}
         </div>

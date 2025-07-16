@@ -1,29 +1,49 @@
+import blogService from '../services/blogs'
+import { createSlice } from '@reduxjs/toolkit'
+
 const initialState = []
 
-const blogReducer = (state=initialState, action) => {
-  switch(action.type) {
-  case 'GET':
-    return action.payload
-  case 'ADD':
-    return state.concat(action.payload)
-  default:
-    return state
+const blogSlice = createSlice({
+  name: 'blogs',
+  initialState,
+  reducers: {
+    addBlog(state=initialState, action) {
+      state.push(action.payload)
+    },
+    setBlogs(state=initialState, action) {
+      return action.payload
+    }
+  }
+})
+
+export const createBlog = (blog) => {
+  return async dispatch => {
+    const newBlog = await blogService.create(blog)
+    dispatch(addBlog(newBlog))
   }
 }
 
-export const setBlogs = (blogs) => {
-  console.log(blogs)
-  return {
-    type: 'GET',
-    payload: blogs
+export const getAllBlogs = () => {
+  return async dispatch => {
+    const blogs = await blogService.getAll()
+    blogs.sort((a, b) => b.likes - a.likes)
+    dispatch(setBlogs(blogs))
   }
 }
 
-export const addBlog = (blog) => {
-  return {
-    type: 'ADD',
-    payload: blog
+export const addLike = (blog) => {
+  return async dispatch => {
+    await blogService.addLike(blog)
+    dispatch(getAllBlogs())
   }
 }
 
-export default blogReducer
+export const removeBlog = (blog, user) => {
+  return async dispatch => {
+    await blogService.remove(blog, user)
+    dispatch(getAllBlogs())
+  }
+}
+
+export const { addBlog, setBlogs } = blogSlice.actions
+export default blogSlice.reducer

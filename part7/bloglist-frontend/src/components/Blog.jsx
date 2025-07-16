@@ -1,15 +1,15 @@
 import Togglable from './Togglable'
-import blogService from '../services/blogs'
+import { addLike, removeBlog } from '../reducers/blogReducer'
+import { useDispatch } from 'react-redux'
 
-const Blog = ({ blog, user, handleLike, updateBlogs }) => {
+const Blog = ({ blog, user }) => {
+  const dispatch = useDispatch()
   const handleLikeClick = async () => {
-    await handleLike(blog)
-    updateBlogs()
+    dispatch(addLike(blog))
   }
 
   const handleRemoveClick = async () => {
-    await blogService.remove(blog, user)
-    updateBlogs()
+    dispatch(removeBlog(blog, user))
   }
 
   const blogStyle = {
