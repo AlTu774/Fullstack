@@ -9,7 +9,9 @@ import PropTypes from 'prop-types'
 import { setMessage, resetMessage } from './reducers/notificationReducer'
 import { getAllBlogs, createBlog } from './reducers/blogReducer'
 import { loginUser, logoutUser, setUser } from './reducers/userReducer'
+import { getAllUsers } from './reducers/usersReducer'
 import { useDispatch, useSelector } from 'react-redux'
+import UsersView from './components/UsersView'
 
 const App = () => {
   const toggleRef = useRef()
@@ -19,6 +21,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getAllBlogs())
+    dispatch(getAllUsers())
   }, [])
 
   useEffect(() => {
@@ -47,6 +50,11 @@ const App = () => {
       window.localStorage.setItem('loggedUser', loggedUser)
     }
   }, [user])
+
+  useEffect(() => {
+    console.log('ulalaaa')
+    dispatch(getAllUsers())
+  }, [blogs])
 
   const logoutHandler = async () => {
     window.localStorage.clear()
@@ -88,6 +96,7 @@ const App = () => {
             {user.username} has logged in{' '}
             <button onClick={logoutHandler}>logout</button>{' '}
           </p>
+          <UsersView/>
           <Togglable
             buttonLabel={['create', 'cancel']}
             ref={toggleRef}
