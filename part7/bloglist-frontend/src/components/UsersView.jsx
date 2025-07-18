@@ -1,4 +1,9 @@
 import { useSelector } from 'react-redux'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link,
+  useParams
+} from 'react-router-dom'
 
 const UsersView = () => {
   const users = useSelector(state => state.users)
@@ -8,6 +13,9 @@ const UsersView = () => {
       blogsL: user.blogs.length
     }
   })
+  const padding = {
+    padding: 5
+  }
 
   return (
     <div>
@@ -21,10 +29,11 @@ const UsersView = () => {
         </thead>
         <tbody>
           {allUsers.map((user) => {
+            const link = '/users/'+user.id
             return (
               <tr key={user.id}>
                 <td>
-                  {user.username}
+                  <Link style={padding} to={link}>{user.username}</Link>
                 </td>
                 <td>
                   {user.blogsL}

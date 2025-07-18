@@ -12,6 +12,11 @@ import { loginUser, logoutUser, setUser } from './reducers/userReducer'
 import { getAllUsers } from './reducers/usersReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import UsersView from './components/UsersView'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from 'react-router-dom'
+import User from './components/User'
 
 const App = () => {
   const toggleRef = useRef()
@@ -52,7 +57,6 @@ const App = () => {
   }, [user])
 
   useEffect(() => {
-    console.log('ulalaaa')
     dispatch(getAllUsers())
   }, [blogs])
 
@@ -84,36 +88,76 @@ const App = () => {
     loginHandler: PropTypes.func.isRequired,
   }
 
+  const Home = () => {
+    return (
+      <div>
+        {user === null || user ==='failed' ? (
+          <LoginForm loginHandler={loginHandler} />
+        ) : (
+          <div>
+            <h2>blogs</h2>
+            <Notification />
+            <p>
+              {user.username} has logged in{' '}
+              <button onClick={logoutHandler}>logout</button>{' '}
+            </p>
+            <UsersView/>
+            <Togglable
+              buttonLabel={['create', 'cancel']}
+              ref={toggleRef}
+              state={true}
+            >
+              <CreateBlogForm createHandler={createHandler} />
+            </Togglable>
+            {blogs.map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                user={user}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
-    <div>
-      {user === null || user ==='failed' ? (
-        <LoginForm loginHandler={loginHandler} />
-      ) : (
-        <div>
-          <h2>blogs</h2>
-          <Notification />
-          <p>
-            {user.username} has logged in{' '}
-            <button onClick={logoutHandler}>logout</button>{' '}
-          </p>
-          <UsersView/>
-          <Togglable
-            buttonLabel={['create', 'cancel']}
-            ref={toggleRef}
-            state={true}
-          >
-            <CreateBlogForm createHandler={createHandler} />
-          </Togglable>
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={user}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    <Router>
+      <div>
+        {user === null || user ==='failed' ? (
+          <LoginForm loginHandler={loginHandler} />
+        ) : (
+          <div>
+            <h2>blogs</h2>
+            <Notification />
+            <p>
+              {user.username} has logged in{' '}
+              <button onClick={logoutHandler}>logout</button>{' '}
+            </p>
+            <Routes>
+              <Route path='/users/:id' element={<User />} />
+              <Route path='/' element={<div></div>} />
+            </Routes>
+            <UsersView/>
+            <Togglable
+              buttonLabel={['create', 'cancel']}
+              ref={toggleRef}
+              state={true}
+            >
+              <CreateBlogForm createHandler={createHandler} />
+            </Togglable>
+            {blogs.map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                user={user}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </Router>
   )
 }
 
