@@ -2,9 +2,7 @@ import { useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
-import CreateBlogForm from './components/CreateBlogForm'
 import PropTypes from 'prop-types'
 import { setMessage, resetMessage } from './reducers/notificationReducer'
 import { getAllBlogs, createBlog } from './reducers/blogReducer'
@@ -13,6 +11,7 @@ import { getAllUsers } from './reducers/usersReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import UsersView from './components/UsersView'
 import BlogsView from './components/BlogsView'
+import NavMenu from './components/NavMenu'
 import {
   BrowserRouter as Router,
   Routes, Route
@@ -95,15 +94,7 @@ const App = () => {
   const Home = () => {
     return (
       <div>
-        <UsersView/>
-        <Togglable
-          buttonLabel={['create', 'cancel']}
-          ref={toggleRef}
-          state={true}
-        >
-          <CreateBlogForm createHandler={createHandler} />
-        </Togglable>
-        <BlogsView />
+        <h1>blog app</h1>
       </div>
     )
   }
@@ -114,22 +105,20 @@ const App = () => {
         <LoginForm loginHandler={loginHandler} />
       ) : (
         <div>
-          <h2>blogs</h2>
+          <NavMenu user={user} logoutHandler={logoutHandler} />
           <Notification />
-          <p>
-            {user.username} has logged in{' '}
-            <button onClick={logoutHandler}>logout</button>{' '}
-          </p>
+          <Routes>
+            <Route path='/users/:id' element={<User />} />
+            <Route path='/' element={<Home />} />
+            <Route path='/blogs/:id' element={<Blog user={user}/>} />
+            <Route path='/blogs' element={<BlogsView />} />
+            <Route path='/users' element={<UsersView />}/>
+          </Routes>
         </div>
-      )
-      }
-      <Routes>
-        <Route path='/users/:id' element={<User />} />
-        <Route path='/' element={<Home />} />
-        <Route path='/blogs/:id' element={<Blog user={user}/>} />
-      </Routes>
+      )}
     </Router>
   )
+
 }
 
 export default App
