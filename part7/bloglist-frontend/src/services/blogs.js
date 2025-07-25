@@ -34,9 +34,12 @@ const addLike = async (blog) => {
 }
 
 const addComment = async (blogId, comment) => {
-  const url = '/blogs/'+blogId+'/comments'
+  const url = baseUrl + '/' + blogId + '/comments'
+  const config = {
+    headers: { Authorization: token },
+  }
   try {
-    const request = await axios.post(url, comment)
+    const request = await axios.post(url, comment, config)
     return request.data
 
   } catch (exception) {

@@ -40,15 +40,6 @@ blogsRouter.post('/', middleware.userExtractor,async (request, response) => {
   }
   })
 
-  /*
-  blogsRouter.get('/:id/comments', async (request, response) => {
-    const blogId = request.params.id
-    const comments = Comment.find({})
-
-  })
-  */
-
-
   blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, response) => {
     const content = request.body.text
     const user = request.user

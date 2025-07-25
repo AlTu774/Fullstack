@@ -1,4 +1,4 @@
-import { addLike, removeBlog } from '../reducers/blogReducer'
+import { addLike, removeBlog, addComment } from '../reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
 
@@ -24,7 +24,14 @@ const Blog = ({ user }) => {
     dispatch(removeBlog(blog, user))
     navigate('/')
   }
-  console.log(blog, 'blog')
+
+  const handleComment = async (event) => {
+    event.preventDefault()
+    const comment = {
+      text: event.target.comment.value
+    }
+    dispatch(addComment(blogID, comment))
+  }
 
   return (
     <div>
@@ -39,8 +46,11 @@ const Blog = ({ user }) => {
         <button onClick={async () => handleRemoveClick()}>remove</button>
       ) : null}
       <h2>comments</h2>
+      <form onSubmit={handleComment}>
+        <input name='comment' />
+        <button type='submit'>add comment</button>
+      </form>
       {blog.comments.map(comment => {
-        console.log(comment)
         return (
           <li key={comment.id}>{comment.text}</li>
         )
