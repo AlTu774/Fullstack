@@ -1,14 +1,17 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const Comment = require('../models/comment')
 const middleware = require('../utils/middleware')
 
 
 blogsRouter.get('/',  async (request, response) => {
-    const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 })
+    const blogs = await Blog.find({}).populate([
+      { path:"user", select: "username name" },
+      { path:"comments", select: "text" }
+    ])
 
      response.json(blogs)
   })
-  
 
 blogsRouter.post('/', middleware.userExtractor,async (request, response) => {
   const content = request.body
@@ -22,7 +25,9 @@ blogsRouter.post('/', middleware.userExtractor,async (request, response) => {
     response.status(400).end()
 
   } else {
+    content.comments = []
     content.user = user.id
+
     const blog = new Blog(content)
     const result = await blog.save()
     
@@ -31,6 +36,47 @@ blogsRouter.post('/', middleware.userExtractor,async (request, response) => {
     user.blogs = user.blogs.concat(newestBlog.id)
     await user.save()
   
+    response.status(201).json(result)
+  }
+  })
+
+  /*
+  blogsRouter.get('/:id/comments', async (request, response) => {
+    const blogId = request.params.id
+    const comments = Comment.find({})
+
+  })
+  */
+
+
+  blogsRouter.post('/:id/comments', middleware.userExtractor, async (request, response) => {
+    const content = request.body.text
+    const user = request.user
+    const blogId = request.params.id
+
+  if ((content == undefined) || (user == undefined) || (blogId == undefined)) {
+    response.status(400).end()
+  } else {
+    const comment = {
+      text: content,
+      user: user.id,
+      blog: blogId
+    }
+    const newComment = new Comment(comment)
+    const result = await newComment.save()
+
+    const comments = await Comment.find({})
+    const newestComment = comments[comments.length-1]
+
+    const blog = await Blog.findById(blogId)
+    if (blog == undefined) {
+      response.status(400).end()
+    }
+    blog.comments = blog.comments.concat(newestComment.id)
+    await blog.save()
+
+    user.comments = user.comments.concat(newComment.id)
+    await user.save()
     response.status(201).json(result)
   }
   })

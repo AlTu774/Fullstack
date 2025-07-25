@@ -33,6 +33,17 @@ const addLike = async (blog) => {
   }
 }
 
+const addComment = async (blogId, comment) => {
+  const url = '/blogs/'+blogId+'/comments'
+  try {
+    const request = await axios.post(url, comment)
+    return request.data
+
+  } catch (exception) {
+    return exception.response.status
+  }
+}
+
 const remove = async (blog, user) => {
   if (window.confirm('Remove ' + blog.title + ' by ' + blog.author)) {
     const request = await axios.delete(baseUrl + '/' + blog.id, {
@@ -47,10 +58,12 @@ const remove = async (blog, user) => {
   }
 }
 
+
 export default {
   setToken,
   getAll,
   create,
   addLike,
+  addComment,
   remove,
 }

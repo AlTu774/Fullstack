@@ -8,14 +8,14 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:3003/api/blogs
 
-POST http://localhost:3003/api/blogs
+###
+
+POST http://localhost:3003/api/blogs/6882a224a57205b3cbbeaccc/comments
 Content-Type: application/json
 Authorization: Bearer 
 
 { 
-  "title": "Test blog 2",
-  "author": "Mr. Test",
-  "url": "/test/url",
-  "likes": 5
+  "text": "first comment"
 }

@@ -24,6 +24,7 @@ const Blog = ({ user }) => {
     dispatch(removeBlog(blog, user))
     navigate('/')
   }
+  console.log(blog, 'blog')
 
   return (
     <div>
@@ -37,6 +38,13 @@ const Blog = ({ user }) => {
       {user.username === blog.user.username ? (
         <button onClick={async () => handleRemoveClick()}>remove</button>
       ) : null}
+      <h2>comments</h2>
+      {blog.comments.map(comment => {
+        console.log(comment)
+        return (
+          <li key={comment.id}>{comment.text}</li>
+        )
+      })}
     </div>
   )
 }

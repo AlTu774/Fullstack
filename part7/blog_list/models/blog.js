@@ -9,6 +9,12 @@ const blogSchema = new mongoose.Schema({
 
     },
     url: String,
+    comments: [
+        {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment"
+        }
+    ],
     likes: Number
   })
   
