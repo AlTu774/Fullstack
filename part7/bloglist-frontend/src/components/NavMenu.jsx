@@ -1,19 +1,24 @@
 import { Link } from 'react-router-dom'
+import { AppBar,
+  Toolbar,
+  Button
+} from '@mui/material'
 
 const NavMenu = ({ user, logoutHandler }) => {
-  const style = {
-    background: 'lightgray',
-    padding: '5px',
-    border: 'lightgray'
-  }
 
   return (
-    <div style={style}>
-      <Link to={'/blogs'}> blogs </Link>
-      <Link to={'/users'}> users </Link>
-      {user.username} has logged in{' '}
-      <button onClick={logoutHandler}>logout</button>{' '}
-    </div>
+    <AppBar position='static' sx={{ background: 'gray' }}>
+      <Toolbar>
+        <Button>
+          <Link to={'/blogs'}> blogs </Link>
+        </Button>
+        <Button>
+          <Link to={'/users'}> users </Link>
+        </Button>
+        {user.username} has logged in{' '}
+        <Button onClick={logoutHandler} name='logout'>LOGOUT</Button>
+      </Toolbar>
+    </AppBar>
   )
 }
 

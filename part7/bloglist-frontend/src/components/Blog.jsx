@@ -1,6 +1,7 @@
 import { addLike, removeBlog, addComment } from '../reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
+import { Box, List, ListItem, ListItemText } from '@mui/material'
 
 const Blog = ({ user }) => {
   const navigate = useNavigate()
@@ -50,11 +51,15 @@ const Blog = ({ user }) => {
         <input name='comment' />
         <button type='submit'>add comment</button>
       </form>
-      {blog.comments.map(comment => {
-        return (
-          <li key={comment.id}>{comment.text}</li>
-        )
-      })}
+      <List sx = {{ listStyleType: 'disc' }}>
+        {blog.comments.map(comment => {
+          return (
+            <ListItem key={comment.id} sx = {{ display: 'list-item' }}>
+              <ListItemText primary={comment.text} />
+            </ListItem>
+          )
+        })}
+      </List>
     </div>
   )
 }

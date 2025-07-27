@@ -5,6 +5,16 @@ import { setMessage, resetMessage } from '../reducers/notificationReducer'
 import Togglable from './Togglable'
 import CreateBlogForm from './CreateBlogForm'
 import { useRef } from 'react'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Container
+} from '@mui/material'
+
 
 const BlogsView = () => {
   const dispatch = useDispatch()
@@ -35,22 +45,32 @@ const BlogsView = () => {
 
   return (
     <div>
-      <Togglable
-        buttonLabel={['create', 'cancel']}
-        ref={toggleRef}
-        state={true}
-      >
-        <CreateBlogForm createHandler={createHandler} />
-      </Togglable>
-      {blogs.map((blog) => {
-        const url = '/blogs/'+blog.id
-        return (
-          <div style={blogStyle} key={blog.id}>
-            <Link to={url}>{blog.title} {blog.author}</Link>
-          </div>
-        )
-      })
-      }
+      <Container align={'center'} >
+        <Togglable
+          buttonLabel={['create', 'cancel']}
+          ref={toggleRef}
+          state={true}
+        >
+          <CreateBlogForm createHandler={createHandler} />
+        </Togglable>
+      </Container>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            {blogs.map((blog) => {
+              const url = '/blogs/'+blog.id
+              return (
+                <TableRow key={blog.id}>
+                  <TableCell sx={{ border: 1, borderColor:'lightgray' }}>
+                    <Link to={url}>{blog.title} {blog.author}</Link>
+                  </TableCell>
+                </TableRow>
+              )
+            })
+            }
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }

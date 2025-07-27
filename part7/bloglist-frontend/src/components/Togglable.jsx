@@ -1,4 +1,5 @@
 import { useState, forwardRef, useImperativeHandle } from 'react'
+import { Button } from '@mui/material'
 
 const Togglable = forwardRef((props, refs) => {
   const [visible, setVisible] = useState(props.state)
@@ -19,11 +20,11 @@ const Togglable = forwardRef((props, refs) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel[0]}</button>
+        <Button onClick={toggleVisibility} name={props.buttonLabel[0]} size='small'>{props.buttonLabel[0]}</Button>
       </div>
       <div style={showWhenVisible} className='toggleChildren'>
         {props.children}
-        <button onClick={toggleVisibility}>{props.buttonLabel[1]}</button>
+        <Button onClick={toggleVisibility} name={props.buttonLabel[0]} size='small'>{props.buttonLabel[1]}</Button>
       </div>
     </div>
   )

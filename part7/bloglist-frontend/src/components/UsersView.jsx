@@ -1,5 +1,14 @@
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  TableHead
+} from '@mui/material'
 
 const UsersView = () => {
   const users = useSelector(state => state.users)
@@ -16,31 +25,36 @@ const UsersView = () => {
   return (
     <div>
       <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th> </th>
-            <th>created blogs</th>
-          </tr>
-        </thead>
-        <tbody>
-          {allUsers.map((user) => {
-            const link = '/users/'+user.id
-            return (
-              <tr key={user.id}>
-                <td>
-                  <Link style={padding} to={link}>{user.username}</Link>
-                </td>
-                <td>
-                  {user.blogsL}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>  </TableCell>
+              <TableCell>
+              created blogs
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {allUsers.map((user) => {
+              const link = '/users/'+user.id
+              return (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Link style={padding} to={link}>{user.username}</Link>
+                  </TableCell>
+                  <TableCell>
+                    {user.blogsL}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }
+
 
 export default UsersView
